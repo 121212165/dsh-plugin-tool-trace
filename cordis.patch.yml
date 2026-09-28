@@ -1,0 +1,7 @@
+# Mounts tool-trace into a dsh profile.
+- insert:
+    - id: tool-trace
+      name: dsh-plugin-tool-trace
+      config:
+        enabled: true
+        captureArgsSize: true   # only sizes are persisted, never argument content
