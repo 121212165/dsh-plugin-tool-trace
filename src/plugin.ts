@@ -120,9 +120,10 @@ export function apply(ctx: Context, config: Config): void {
     inFlight.delete(key);
     const downstream = await next();
     if (!flight) return downstream;
-    const resultText = (downstream as { content?: unknown } | undefined)?.content;
+    const resultShape = result as { content?: unknown; isError?: unknown } | undefined;
+    const resultText = resultShape?.content;
     const resultChars = typeof resultText === 'string' ? resultText.length : resultText === undefined ? 0 : JSON.stringify(resultText).length;
-    const isError = Boolean((downstream as { isError?: unknown } | undefined)?.isError);
+    const isError = Boolean(resultShape?.isError);
     try {
       store.append({
         v: 1,
