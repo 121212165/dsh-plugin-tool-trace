@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "工具追踪",
+    "description": "记录每次工具调用的耗时与大小，/tools-stats 排行看慢在哪"
+  }
+}
