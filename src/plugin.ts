@@ -144,10 +144,13 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.commands.register({
     name: 'tools-stats',
-    description: '工具调用追踪排行：谁最耗时、谁结果最大、谁在报错',
+    description: '工具调用追踪排行（原始统计）：谁最耗时、谁结果最大、谁在报错；带告警的合并视图在 error-radar 的 /health',
     handler: () => {
       const all = store.readAll();
-      return { kind: 'success', text: renderStats(aggregate(all.records, all.skipped)) };
+      return {
+        kind: 'success',
+        text: `${renderStats(aggregate(all.records, all.skipped))}\n\n想看"现在能不能开工"：dsh-plugin-error-radar 的 /health（同一份追踪数据，加了错误率告警线与连败判定）。本命令继续只出原始统计，不重复挂 middleware。`,
+      };
     },
   });
 
