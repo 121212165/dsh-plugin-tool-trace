@@ -1,5 +1,8 @@
 # dsh-plugin-tool-trace
 
+> 🧩 **dsh 插件家族**（22 件）：总目录 **[dsh-plugin-family](https://github.com/121212165/dsh-plugin-family)** ｜ 明星插件：**[ide-hub](https://github.com/121212165/dsh-plugin-ide-hub)** 跨 IDE 统一管理 · **[task-forge](https://github.com/121212165/dsh-plugin-task-forge)** 跨窗口无损交接 · **[quota](https://github.com/121212165/dsh-plugin-quota)** 实时用量仪表
+
+
 **EN** · Per-tool-call telemetry: duration plus argument and result sizes appended to monthly JSONL, with `/tools-stats` ranking the slowest tools. Keys off the same rootCallId/callId pairing that price-aware verified. · 6 `node --test` green · result size is exact when content is a string and a serialized estimate otherwise · not live-mounted.
 
 DeepSeek Harness (dsh) 插件：工具调用追踪。每次工具调用记录耗时、参数量与结果量（**只记大小，不记内容**），按月 JSONL 落盘，`/tools-stats` 出慢工具排行榜。transcript 回答"说了什么"，本插件回答"做了什么、慢在哪"。
