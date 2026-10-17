@@ -63,7 +63,8 @@
     "@deepseek-ai/schemastery": "3.18.2",
     "@types/node": "26.6.2",
     "@typescript/typescript-win32-x64": "^7.0.2",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "@dsh-family/pricing": "workspace:*"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": ">=4.0.0"
