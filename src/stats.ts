@@ -13,7 +13,7 @@ export interface TraceRecord {
   argChars: number;
   resultChars: number;
   isError: boolean;
-  turn?: number;
+  turn?: number | undefined;
 }
 
 export interface ToolStat {

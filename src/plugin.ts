@@ -13,7 +13,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 import { aggregate, renderStats, type TraceRecord } from './stats.ts';
-import { parseRecordLine, type TraceLineLike } from './trace-line.ts';
+import { parseRecordLine } from './trace-line.ts';
 
 export const name = 'tool-trace';
 export const inject = ['commands', 'tools', 'sessions'];
@@ -86,7 +86,7 @@ interface InFlight {
   tool: string;
   startedAt: number;
   argChars: number;
-  turn?: number;
+  turn?: number | undefined;
 }
 
 export function apply(ctx: Context, config: Config): void {
@@ -96,8 +96,12 @@ export function apply(ctx: Context, config: Config): void {
   const inFlight = new Map<string, InFlight>();
 
   const callKeyOf = (exec: unknown): string => {
+    // Key per tool call, not per root call: calling on only rootCallId merges
+    // parallel sibling tools under one key and their started times clobber each other.
     const shape = exec as { rootCallId?: unknown; callId?: unknown };
-    return String(shape?.rootCallId ?? shape?.callId ?? '');
+    const call = shape?.callId;
+    if (call !== undefined && call !== null && String(call) !== '') return `${String(shape?.rootCallId ?? '')}:${String(call)}`;
+    return String(shape?.rootCallId ?? call ?? '');
   };
 
   ctx.on('tools/pre-execute', (exec, next) => {
