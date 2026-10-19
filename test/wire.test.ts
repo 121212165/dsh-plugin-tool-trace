@@ -110,3 +110,43 @@ test('disabled config mounts nothing', async () => {
   const { apply } = (await import('../src/plugin.ts')) as unknown as { apply: Apply };
   await Promise.resolve(apply(ctx, { enabled: false }));
 });
+
+test('parallel tools sharing one root call are attributed to their own call ids', async () => {
+  const commands: CapturedCommand[] = [];
+  const listeners: Listener[] = [];
+  const dataDir = mkdtempSync(join(tmpdir(), 'tool-trace-wire-'));
+  after(() => rmSync(dataDir, { recursive: true, force: true }));
+  const ctx = {
+    logger: cmdLogger,
+    on(event: string, callback: (...args: unknown[]) => unknown) { listeners.push({ event, callback }); },
+    commands: { register(definition: CapturedCommand) { commands.push(definition); } },
+  };
+  const { apply } = (await import('../src/plugin.ts')) as unknown as { apply: Apply };
+  await Promise.resolve(apply(ctx, { enabled: true, dataDir, captureArgsSize: true }));
+  const pre = listeners.find((candidate) => candidate.event === 'tools/pre-execute')!;
+  const post = listeners.find((candidate) => candidate.event === 'tools/post-execute')!;
+  const makeExec = (callId: string, tool: string) => ({
+    rootCallId: 'root-p',
+    callId,
+    name: tool,
+    arguments: {},
+    agent: { session: { id: 's' } },
+  });
+  const a = makeExec('t1', 'read_file');
+  const b = makeExec('t2', 'write_file');
+  const c = makeExec('t3', 'shell');
+  pre.callback(a, () => {});
+  pre.callback(b, () => {});
+  pre.callback(c, () => {});
+  await post.callback(a, { content: 'a', isError: false }, () => 'down');
+  await post.callback(b, { content: 'bb', isError: false }, () => 'down');
+  await post.callback(c, { content: 'ccc', isError: true }, () => 'down');
+
+  const files = readdirSync(dataDir);
+  assert.equal(files.length, 1, 'single month file');
+  const tools = readFileSync(join(dataDir, files[0]!), 'utf8').trim().split(/\r?\n/).map((line) => JSON.parse(line).tool).sort();
+  assert.deepEqual(tools, ['read_file', 'shell', 'write_file'], `each parallel call recorded with its own tool: ${tools.join(',')}`);
+  const stats = commands.find((candidate) => candidate.name === 'tools-stats');
+  const output = stats!.handler() as { text: string };
+  assert.ok(output.text.includes('3 次'), `three calls counted: ${output.text}`);
+});
