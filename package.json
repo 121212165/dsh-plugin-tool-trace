@@ -27,6 +27,11 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "catalog": {
+      "category": "工具与质量",
+      "blurb": "工具调用追踪：做了什么、慢在哪，只记大小不记内容",
+      "entries": "`/tools-stats`"
     }
   },
   "engines": {
