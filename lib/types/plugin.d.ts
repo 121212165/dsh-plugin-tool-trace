@@ -15,15 +15,15 @@ export interface Config {
     /** record argument JSON length (content is never persisted, only its size) */
     captureArgsSize: boolean;
 }
-export declare const Config: Schema<Schemastery.ObjectS<{
-    enabled: Schema<boolean, boolean>;
-    dataDir: Schema<string, string>;
-    captureArgsSize: Schema<boolean, boolean>;
-}>, Schemastery.ObjectT<{
-    enabled: Schema<boolean, boolean>;
-    dataDir: Schema<string, string>;
-    captureArgsSize: Schema<boolean, boolean>;
-}>>;
+export declare const Config: Schema<Schemastery.ObjectS<NoInfer<{
+    enabled: Schema<boolean, boolean, "defined">;
+    dataDir: Schema<string, string, "plain">;
+    captureArgsSize: Schema<boolean, boolean, "defined">;
+}>>, Schemastery.ObjectT<NoInfer<{
+    enabled: Schema<boolean, boolean, "defined">;
+    dataDir: Schema<string, string, "plain">;
+    captureArgsSize: Schema<boolean, boolean, "defined">;
+}>>, "plain">;
 export declare function expandHome(dir: string): string;
 export declare class TraceStore {
     readonly dataDir: string;
